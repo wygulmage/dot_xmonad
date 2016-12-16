@@ -4,7 +4,7 @@ Config
 , fgColor = "grey"
 , posititon = TopW L 90
 , commands =
-  [ Run Date "%a %b %_d %l:%M" "date"
+  [ Run Date "%A %B %-d %_H:%M" "date"
   , Run StdinReader
   ]
 , sepChar = "%"
