@@ -1,13 +1,15 @@
 Config
-{ font = "Futura Std-14"
+{ font = "xft:Futura Std:size=14"
 , bgColor = "black"
 , fgColor = "grey"
-, posititon = TopW L 90
-, commands =
-  [ Run Date "%A %B %-d %_H:%M" "date"
-  , Run StdinReader
-  ]
+, position = Top
 , sepChar = "%"
 , alignSep = "}{"
-, template = "%StdinReader% }{ %date%"
+, template = "%kbd% } %date% {"
+, commands =
+    [ Run Date "%A %B %-d %_H:%M" "date" 10
+    , Run Kbd [ ("us(dvorak)", "DV")
+              , ("us", "US")
+              ]
+    ]
 }
