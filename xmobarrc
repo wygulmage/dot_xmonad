@@ -1,13 +1,15 @@
 Config
-{ font = "xft:Futura Std:size=14"
+{ font = "xft:IBM 3270:size=16:shadow=true:shadow-radius=12:shadow-offset-x=0:shadow-offset-y=0:shadow-red=1:shadow-green=0.9:shadow-blue=0"
+, borderColor = "black"
 , bgColor = "black"
-, fgColor = "grey"
+, fgColor = "#ff8100"
 , position = Top
 , sepChar = "%"
 , alignSep = "}{"
-, template = "%kbd% } %date% {"
+, template = "%StdinReader% } %date% { %kbd%"
 , commands =
-    [ Run Date "%A %B %-d %_H:%M" "date" 10
+    [ Run StdinReader
+    , Run Date "%A %B %-d %_H:%M" "date" 10
     , Run Kbd [ ("us(dvorak)", "DV")
               , ("us", "US")
               ]
