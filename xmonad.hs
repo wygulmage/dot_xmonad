@@ -10,7 +10,7 @@ main = do
   xmonad defaultConfig {
     borderWidth = 1,
     normalBorderColor = "black",
-    focusedBorderColor = "#7777AA",
+    focusedBorderColor = "#ff8100",
     modMask = mod4Mask, -- 'Win' key
     terminal = "cool-retro-term",
     manageHook = manageDocks <+> manageHook defaultConfig,

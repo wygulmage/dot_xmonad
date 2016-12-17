@@ -7,18 +7,19 @@ Config
 , position = Top
 , sepChar = "%"
 , alignSep = "}{"
-, template = "%StdinReader% } %date% { %battery% %default:Master% %kbd%"
+, template = "%StdinReader% } %date% { %kbd% %default:Master% %wlp2s0wi% %battery%"
 , commands =
     [ Run StdinReader
     , Run Date "%A %B %-d %_H:%M" "date" 600
     , Run Kbd [ ("us(dvorak)", "DV"), ("us", "US") ]
-    , Run Volume "default" "Master" ["-t", "<status><volume>", "--", "-O", "<fn=4>🔈</fn>", "-o", "<fn=4>🔇</fn>"] 10
+    , Run Volume "default" "Master" ["-t", "<status><volume>", "--", "-O", "<fn=4>📢</fn>", "-o", "<fn=4>📢̸</fn>"] 10
     , Run Battery [ "-t", "<acstatus>",
                     "--",
                     "-O", "<fn=4>🔌</fn><left>",
                     "-i", "<fn=4>🔌</fn>",
                     "-o", "☢<left>"
                   ] 10
+    , Run Wireless "wlp2s0" [ "-t", "<fn=4>📡</fn><essid>"] 10
 --    , Run Brightness [ "-t", "💡<percent>" ] 10 -- called '%bright%' in template
     ]
 }
