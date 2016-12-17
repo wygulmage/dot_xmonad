@@ -6,7 +6,7 @@ import XMonad.Layout.NoBorders
 import System.IO (hPutStrLn)
 
 main = do
-  xmproc <- spawnPipe "/usr/bin/xmobar /Ix/keith/Settings/xmonad/xmobarrc"
+  xmproc <- spawnPipe "xmobar /Ix/keith/Settings/xmonad/xmobarrc"
   xmonad defaultConfig {
     borderWidth = 1,
     normalBorderColor = "black",
