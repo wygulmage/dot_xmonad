@@ -9,6 +9,7 @@ import System.IO (hPutStrLn)
 import Graphics.X11.ExtraTypes.XF86
 
 myModKey = mod4Mask -- Win key
+myTerminal = "cool-retro-term"
 myOtherKeys =
         ((0, xF86XK_AudioRaiseVolume), spawn "amixer set Master 2%+") :
         ((0, xF86XK_AudioLowerVolume), spawn "amixer set Master 2%-") :
@@ -26,12 +27,13 @@ main = do
     normalBorderColor = "black",
     focusedBorderColor = "#ff8100",
     modMask = myModKey,
-    terminal = "cool-retro-term",
+    terminal = myTerminal,
     manageHook = manageDocks <+> manageHook defaultConfig,
     layoutHook = avoidStruts $ smartBorders $ layoutHook defaultConfig,
     handleEventHook = docksEventHook `mappend` handleEventHook defaultConfig,
     logHook = dynamicLogWithPP xmobarPP {
         ppOutput = hPutStrLn xmproc,
         ppTitle = shorten 50
-        }
+        },
+    startupHook = (spawn myTerminal) <+> startupHook defaultConfig
     } `additionalKeys` myOtherKeys
