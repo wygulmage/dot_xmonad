@@ -26,7 +26,7 @@ Config
                     "-i", "<fn=4>🔌</fn>",
                     "-o", "☢<left>"
                   ] 10
-    , Run Wireless "wlp2s0" [ "-t", "<fn=4>📡</fn><essid>"] 10
+    , Run Wireless "wlp2s0" [ "-t", "<action=`(nm-connection-editor &)` button=1><fn=4>📡</fn><essid></action>"] 10
 --    , Run Brightness [ "-t", "💡<percent>" ] 10 -- called '%bright%' in template
     ]
 }
