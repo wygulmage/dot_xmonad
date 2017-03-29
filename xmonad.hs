@@ -2,7 +2,7 @@ import XMonad
 import XMonad.Config (def)
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
-import XMonad.Hooks.ManageHelpers (doFullFloat)
+import XMonad.Hooks.ManageHelpers (doFullFloat, isFullscreen)
 import XMonad.Util.Run (spawnPipe)
 import XMonad.Layout.NoBorders
 import XMonad.Util.EZConfig (additionalKeys)
@@ -22,6 +22,11 @@ myOtherKeys =
         ((0, xF86XK_KbdBrightnessDown), spawn "/Ix/k/Settings/xmonad/kbd-backlight.sh down") :
         []
 
+-- myCurrentLayout = ask >>= \w -> liftX $ do
+--   d <- asks display
+--   let layoutName = description . W.layout . W.workspace . W.current
+
+
 main = do
   xmproc <- spawnPipe "xmobar /Ix/k/Settings/xmonad/xmobarrc"
   xmonad $ def {
@@ -30,7 +35,7 @@ main = do
     focusedBorderColor = "#ff8100",
     modMask = myModKey,
     terminal = myTerminal,
-    manageHook = manageDocks <+> (className =? "smplayer" --> doFullFloat) <+> manageHook def, -- to make this work properly I need another Query that gets the current layout and compares it to "Full". Hints: liftX, ask, description . W.layout . W.workspace . W.current.
+    manageHook = manageDocks <+> (className =? "smplayer" --> doFullFloat) <+> (isFullscreen --> doFullFloat) <+> manageHook def, -- to make this work properly I need another Query that gets the current layout and compares it to "Full". Hints: liftX, ask, description . W.layout . W.workspace . W.current.
     layoutHook = avoidStruts $ smartBorders $ (Tall 1 (3/100) (1/2)) ||| Full,
     handleEventHook = docksEventHook `mappend` handleEventHook def,
     logHook = dynamicLogWithPP xmobarPP {
