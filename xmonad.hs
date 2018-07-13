@@ -1,16 +1,22 @@
+{-# LANGUAGE FlexibleInstances #-}
+
 import XMonad
+import XMonad.Core (Query(..), WindowSet(..))
 import XMonad.Config (def)
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.ManageHelpers (doFullFloat, isFullscreen)
 import XMonad.Util.Run (spawnPipe)
 import XMonad.Layout.NoBorders
+import XMonad.Layout.Fullscreen (fullscreenSupport, fullscreenManageHook, fullscreenEventHook)
 import XMonad.Util.EZConfig (additionalKeys)
 import qualified XMonad.StackSet as W -- for window management commands.
 import System.IO (hPutStrLn)
 import Graphics.X11.ExtraTypes.XF86
+import Data.Semigroup
 
-myModKey = mod4Mask -- Win key
+
+winKey = mod4Mask -- Win key
 myTerminal = "cool-retro-term"
 myOtherKeys =
         ((0, xF86XK_AudioRaiseVolume), spawn "amixer set Master 2%+") :
@@ -29,19 +35,33 @@ myOtherKeys =
 
 main = do
   xmproc <- spawnPipe "xmobar /Ix/k/Settings/xmonad/xmobarrc"
-  xmonad $ def {
-    borderWidth = 1,
-    normalBorderColor = "black",
-    focusedBorderColor = "#ff8100",
-    modMask = myModKey,
-    terminal = myTerminal,
-    manageHook = manageDocks <+> (className =? "smplayer" --> doFullFloat) <+> (isFullscreen --> doFullFloat) <+> manageHook def, -- to make this work properly I need another Query that gets the current layout and compares it to "Full". Hints: liftX, ask, description . W.layout . W.workspace . W.current.
-    layoutHook = avoidStruts $ smartBorders $ (Tall 1 (3/100) (1/2)) ||| Full,
-    handleEventHook = docksEventHook `mappend` handleEventHook def,
+  (xmonad . fullscreenSupport) $ def {
+    borderWidth = 1, normalBorderColor = "black", focusedBorderColor = "#ff8100"
+    ,
+    modMask = winKey
+    ,
+    terminal = myTerminal
+    ,
+    manageHook = -- to make this work properly I need another Query that gets the current layout and compares it to "Full". Hints: liftX, ask, description . W.layout . W.workspace . W.current.
+      manageDocks `mappend`
+      -- (className =? "smplayer" --> doFullFloat) `mappend`
+      (isFullscreen --> doFullFloat) `mappend`
+      fullscreenManageHook `mappend`
+      manageHook def
+    ,
+    layoutHook = (avoidStruts . smartBorders) (Tall 1 (3/100) (1/2) ||| Full)
+    ,
+    handleEventHook =
+      docksEventHook `mappend`
+      fullscreenEventHook `mappend`
+      handleEventHook def
+    ,
     logHook = dynamicLogWithPP xmobarPP {
         ppOutput = hPutStrLn xmproc,
         ppTitle = shorten 50
-        },
-    startupHook = (spawn myTerminal) <+> startupHook def
+        }
+    ,
+    startupHook = spawn myTerminal `mappend` startupHook def
     } `additionalKeys` myOtherKeys
 
+-- Restart xmonad with mod-q.
