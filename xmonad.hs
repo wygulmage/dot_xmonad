@@ -1,12 +1,13 @@
 {-# LANGUAGE FlexibleInstances #-}
 
-import XMonad
+import XMonad -- (spawn, spawnPipe)
 import XMonad.Core (Query(..), WindowSet(..))
 import XMonad.Config (def)
+import XMonad.Actions.UpdatePointer (updatePointer)
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.ManageHelpers (doFullFloat, isFullscreen)
-import XMonad.Util.Run (spawnPipe)
+import XMonad.Util.Run (safeSpawn, unsafeSpawn, spawnPipe)
 import XMonad.Layout.NoBorders
 import XMonad.Layout.Fullscreen (fullscreenSupport, fullscreenManageHook, fullscreenEventHook)
 import XMonad.Util.EZConfig (additionalKeys)
@@ -28,10 +29,6 @@ myOtherKeys =
         ((0, xF86XK_KbdBrightnessDown), spawn "/Ix/k/Settings/xmonad/kbd-backlight.sh down") :
         []
 
--- myCurrentLayout = ask >>= \w -> liftX $ do
---   d <- asks display
---   let layoutName = description . W.layout . W.workspace . W.current
-
 
 main = do
   xmproc <- spawnPipe "xmobar /Ix/k/Settings/xmonad/xmobarrc"
@@ -42,9 +39,8 @@ main = do
     ,
     terminal = myTerminal
     ,
-    manageHook = -- to make this work properly I need another Query that gets the current layout and compares it to "Full". Hints: liftX, ask, description . W.layout . W.workspace . W.current.
+    manageHook =
       manageDocks `mappend`
-      -- (className =? "smplayer" --> doFullFloat) `mappend`
       (isFullscreen --> doFullFloat) `mappend`
       fullscreenManageHook `mappend`
       manageHook def
@@ -57,9 +53,10 @@ main = do
       handleEventHook def
     ,
     logHook = dynamicLogWithPP xmobarPP {
-        ppOutput = hPutStrLn xmproc,
+        ppOutput = hPutStrLn xmproc
+        ,
         ppTitle = shorten 50
-        }
+        } >> updatePointer (0.5, 0.5) (1, 1)
     ,
     startupHook = spawn myTerminal `mappend` startupHook def
     } `additionalKeys` myOtherKeys
