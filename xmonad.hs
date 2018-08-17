@@ -56,7 +56,7 @@ main = do
         ppOutput = hPutStrLn xmproc
         ,
         ppTitle = shorten 50
-        } >> updatePointer (0.5, 0.5) (1, 1)
+        } >> updatePointer (0.5, 0.5) (0.96, 0.96)
     ,
     startupHook = spawn myTerminal `mappend` startupHook def
     } `additionalKeys` myOtherKeys
