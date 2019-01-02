@@ -18,7 +18,7 @@ import Data.Semigroup
 
 
 winKey = mod4Mask -- Win key
-myTerminal = "cool-retro-term"
+myTerminal = "kitty" --was "cool-retro-term"
 myOtherKeys =
         ((0, xF86XK_AudioRaiseVolume), spawn "amixer set Master 2%+") :
         ((0, xF86XK_AudioLowerVolume), spawn "amixer set Master 2%-") :
