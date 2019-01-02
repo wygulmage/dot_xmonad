@@ -1,5 +1,5 @@
 Config
-{ font = "xft:IBM 3270:size=16:shadow=true:shadow-radius=12:shadow-offset-x=0:shadow-offset-y=0:shadow-red=1:shadow-green=0.9:shadow-blue=0,xft:HanaMinB:size=15,xft:Source Code Pro:size=15,xft:Noto Serif:size=15,xft:Symbola:size=15"
+{ font = "xft:Source Code Pro:size=15"
 , additionalFonts = [ "xft:HanaMinB", "xft:Source Code Pro", "xft:Noto Serif", "xft:Symbola" ]
 , borderColor = "black"
 , bgColor = "black"
@@ -27,6 +27,6 @@ Config
                     "-o", "☢<left>"
                   ] 10
     , Run Wireless "wlp2s0" [ "-t", "<action=`(nm-connection-editor &)` button=1><fn=4>📡</fn><essid></action>"] 10
---    , Run Brightness [ "-t", "💡<percent>" ] 10 -- called '%bright%' in template
+    -- , Run Brightness [ "-t", "💡<percent>" ] 10 -- called '%bright%' in template
     ]
 }
