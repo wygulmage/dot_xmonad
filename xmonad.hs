@@ -1,4 +1,7 @@
-{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE
+  UnicodeSyntax
+  , FlexibleInstances
+  #-}
 
 import XMonad -- (spawn, spawnPipe)
 import XMonad.Core (Query(..), WindowSet(..))
@@ -14,8 +17,12 @@ import XMonad.Util.EZConfig (additionalKeys)
 import qualified XMonad.StackSet as W -- for window management commands.
 import System.IO (hPutStrLn)
 import Graphics.X11.ExtraTypes.XF86
-import Data.Semigroup
+-- import Data.Semigroup
 
+
+-- No Semigroup instance for some XMonad monoids.
+(<>) :: Monoid m ⇒ m → m → m
+(<>) = mappend
 
 winKey = mod4Mask -- Win key
 myTerminal = "kitty" --was "cool-retro-term"
@@ -31,7 +38,7 @@ myOtherKeys =
 
 
 main = do
-  xmproc <- spawnPipe "xmobar /Ix/k/Settings/xmonad/xmobarrc"
+  xmobar <- spawnPipe "xmobar /Ix/k/Settings/xmonad/xmobarrc"
   (xmonad . fullscreenSupport) $ def {
     borderWidth = 1, normalBorderColor = "black", focusedBorderColor = "#ff8100"
     ,
@@ -40,25 +47,29 @@ main = do
     terminal = myTerminal
     ,
     manageHook =
-      manageDocks `mappend`
-      (isFullscreen --> doFullFloat) `mappend`
-      fullscreenManageHook `mappend`
+      manageDocks <>
+      (isFullscreen --> doFullFloat) <>
+      fullscreenManageHook <>
       manageHook def
     ,
     layoutHook = (avoidStruts . smartBorders) (Tall 1 (3/100) (1/2) ||| Full)
     ,
     handleEventHook =
-      docksEventHook `mappend`
-      fullscreenEventHook `mappend`
+      docksEventHook <>
+      fullscreenEventHook <>
       handleEventHook def
     ,
     logHook = dynamicLogWithPP xmobarPP {
-        ppOutput = hPutStrLn xmproc
+        ppLayout = const ""
+        ,
+        ppCurrent = wrap "[" "]"
+        ,
+        ppOutput = hPutStrLn xmobar
         ,
         ppTitle = shorten 50
-        } >> updatePointer (0.5, 0.5) (0.96, 0.96)
+        } *> updatePointer (0.5, 0.5) (0.96, 0.96)
     ,
-    startupHook = spawn myTerminal `mappend` startupHook def
+    startupHook = spawn myTerminal <> startupHook def
     } `additionalKeys` myOtherKeys
 
 -- Restart xmonad with mod-q.
