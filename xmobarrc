@@ -15,12 +15,12 @@ Config
     , Run Date "%A %B %-d %_H:%M" "date" 600
     , Run Kbd [ ("us(dvorak)", "DV"), ("us", "US") ]
     , Run Alsa "default" "Master"
-               [ "-t", "<status><volume>",
+               [ "-t", "<action=`(amixer -D pulse set Master toggle &)`><status><volume></action>",
                  "--",
                  "-O", "<fn=1>📢</fn>",
                  "-C", "#ff8100",
                  "-o", "<fn=1>📢̸</fn>",
-                 "-c", "#ff8100"
+                 "-c", "#909190"
                ]
     , Run Battery [ "-t", "<acstatus>",
                     "--",
