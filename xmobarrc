@@ -1,6 +1,6 @@
 Config
-{ font = "xft:Source Code Pro:size=15"
-, additionalFonts = [ "xft:HanaMinB", "xft:Source Code Pro", "xft:Noto Serif", "xft:Symbola" ]
+{ font = "xft:Source Code Pro:size=14"
+, additionalFonts = [ "xft:Symbola" ]
 , border = NoBorder
 -- , borderColor = "black"
 -- , borderWidth = 0
@@ -17,18 +17,18 @@ Config
     , Run Alsa "default" "Master"
                [ "-t", "<status><volume>",
                  "--",
-                 "-O", "<fn=4>📢</fn>",
+                 "-O", "<fn=1>📢</fn>",
                  "-C", "#ff8100",
-                 "-o", "<fn=4>📢̸</fn>",
+                 "-o", "<fn=1>📢̸</fn>",
                  "-c", "#ff8100"
                ]
     , Run Battery [ "-t", "<acstatus>",
                     "--",
-                    "-O", "<fn=4>🔌</fn><left>",
-                    "-i", "<fn=4>🔌</fn>",
-                    "-o", "☢<left>"
+                    "-O", "<fn=1>🔌</fn><left>",
+                    "-i", "<fn=1>🔌</fn>",
+                    "-o", "<fn=1>☢</fn><left>"
                   ] 10
-    , Run Wireless "wlp2s0" [ "-t", "<action=`(nm-connection-editor &)` button=1><fn=4>📡</fn><essid></action>"] 10
+    , Run Wireless "wlp2s0" [ "-t", "<action=`(nm-connection-editor &)` button=1><fn=1>📡</fn><essid></action>"] 10
     -- , Run Brightness [ "-t", "💡<percent>" ] 10 -- called '%bright%' in template
     ]
 }
