@@ -47,16 +47,21 @@ main = do
     terminal = myTerminal
     ,
     manageHook =
-      manageDocks <>
-      (isFullscreen --> doFullFloat) <>
-      fullscreenManageHook <>
+      manageDocks
+      <>
+      (isFullscreen --> doFullFloat)
+      <>
+      fullscreenManageHook
+      <>
       manageHook def
     ,
     layoutHook = (avoidStruts . smartBorders) (Tall 1 (3/100) (1/2) ||| Full)
     ,
     handleEventHook =
-      docksEventHook <>
-      fullscreenEventHook <>
+      docksEventHook
+      <>
+      fullscreenEventHook
+      <>
       handleEventHook def
     ,
     logHook = dynamicLogWithPP xmobarPP {
