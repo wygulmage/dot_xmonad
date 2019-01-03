@@ -1,25 +1,27 @@
 Config
 { font = "xft:Source Code Pro:size=15"
 , additionalFonts = [ "xft:HanaMinB", "xft:Source Code Pro", "xft:Noto Serif", "xft:Symbola" ]
-, borderColor = "black"
+, border = NoBorder
+-- , borderColor = "black"
+-- , borderWidth = 0
 , bgColor = "black"
 , fgColor = "#ff8100"
 , position = Top
 , sepChar = "%"
 , alignSep = "}{"
-, template = "%StdinReader% } %date% { %kbd% %default:Master% %wlp2s0wi% %battery%"
+, template = "%StdinReader% } %date% { %kbd% %alsa:default:Master% %wlp2s0wi% %battery%"
 , commands =
     [ Run StdinReader
     , Run Date "%A %B %-d %_H:%M" "date" 600
     , Run Kbd [ ("us(dvorak)", "DV"), ("us", "US") ]
-    , Run Volume "default" "Master"
-                 [ "-t", "<status><volume>",
-                   "--",
-                   "-O", "<fn=4>📢</fn>",
-                   "-C", "#ff8100",
-                   "-o", "<fn=4>📢̸</fn>",
-                   "-c", "#ff8100"
-                 ] 10
+    , Run Alsa "default" "Master"
+               [ "-t", "<status><volume>",
+                 "--",
+                 "-O", "<fn=4>📢</fn>",
+                 "-C", "#ff8100",
+                 "-o", "<fn=4>📢̸</fn>",
+                 "-c", "#ff8100"
+               ]
     , Run Battery [ "-t", "<acstatus>",
                     "--",
                     "-O", "<fn=4>🔌</fn><left>",
