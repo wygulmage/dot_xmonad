@@ -30,8 +30,10 @@ myOtherKeys =
         ((0, xF86XK_AudioRaiseVolume), spawn "amixer set Master 2%+") :
         ((0, xF86XK_AudioLowerVolume), spawn "amixer set Master 2%-") :
         ((0, xF86XK_AudioMute), spawn "amixer -D pulse set Master toggle") :
-        ((0, xF86XK_MonBrightnessUp), spawn "xbacklight -inc 8") :
-        ((0, xF86XK_MonBrightnessDown), spawn "xbacklight -dec 8") :
+        -- ((0, xF86XK_MonBrightnessUp), spawn "xbacklight -inc 8") :
+        ((0, xF86XK_MonBrightnessUp), spawn "xbacklight +10 -time 0 -steps 1") :
+        -- ((0, xF86XK_MonBrightnessDown), spawn "xbacklight -dec 8") :
+        ((0, xF86XK_MonBrightnessDown), spawn "xbacklight -10 -time 0 -steps 1") :
         ((0, xF86XK_KbdBrightnessUp), spawn "/Ix/k/Settings/xmonad/kbd-backlight.sh up") :
         ((0, xF86XK_KbdBrightnessDown), spawn "/Ix/k/Settings/xmonad/kbd-backlight.sh down") :
         []
