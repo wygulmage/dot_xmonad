@@ -3,15 +3,29 @@
   , FlexibleInstances
   #-}
 
-import XMonad -- (spawn, spawnPipe)
+import XMonad
+   ( Full (Full), Tall (Tall)
+   , (|||), (-->)
+   , borderWidth
+   , normalBorderColor, focusedBorderColor
+   , modMask, mod4Mask
+   , terminal
+   , manageHook, layoutHook, handleEventHook, logHook, startupHook
+   , spawn
+   , xmonad
+   )
 import XMonad.Core (Query(..), WindowSet(..))
 import XMonad.Config (def)
 import XMonad.Actions.UpdatePointer (updatePointer)
 import XMonad.Hooks.DynamicLog
-import XMonad.Hooks.ManageDocks
+   ( ppLayout, ppCurrent, ppOutput, ppTitle
+   , dynamicLogWithPP, xmobarPP
+   , shorten, wrap
+   )
+import XMonad.Hooks.ManageDocks (manageDocks, avoidStruts, docksEventHook)
 import XMonad.Hooks.ManageHelpers (doFullFloat, isFullscreen)
 import XMonad.Util.Run (safeSpawn, unsafeSpawn, spawnPipe)
-import XMonad.Layout.NoBorders
+import XMonad.Layout.NoBorders (smartBorders)
 import XMonad.Layout.Fullscreen (fullscreenSupport, fullscreenManageHook, fullscreenEventHook)
 import XMonad.Util.EZConfig (additionalKeys)
 import qualified XMonad.StackSet as W -- for window management commands.
@@ -25,7 +39,10 @@ import Graphics.X11.ExtraTypes.XF86
 (<>) = mappend
 
 winKey = mod4Mask -- Win key
+
+myTerminal :: String
 myTerminal = "kitty" --was "cool-retro-term"
+
 myOtherKeys =
         ((0, xF86XK_AudioRaiseVolume), spawn "amixer set Master 2%+") :
         ((0, xF86XK_AudioLowerVolume), spawn "amixer set Master 2%-") :
@@ -40,8 +57,8 @@ myOtherKeys =
 
 
 main = do
-  xmobar <- spawnPipe "xmobar /Ix/k/Settings/xmonad/xmobarrc"
-  (xmonad . fullscreenSupport) $ def {
+  xmobar ← spawnPipe "xmobar /Ix/k/Settings/xmonad/xmobarrc"
+  xmonad . fullscreenSupport $ def {
     borderWidth = 1, normalBorderColor = "black", focusedBorderColor = "#ff8100"
     ,
     modMask = winKey
