@@ -1,10 +1,14 @@
 {-# LANGUAGE
   UnicodeSyntax
   , FlexibleInstances
+  -- , NoImplicitPrelude
   #-}
 
+-- import Prelude hiding (take)
 import XMonad
-   ( Full (Full), Tall (Tall)
+   ( X
+   , Full (Full), Tall (Tall)
+   , KeyMask, KeySym
    , (|||), (-->)
    , borderWidth
    , normalBorderColor, focusedBorderColor
@@ -31,7 +35,7 @@ import XMonad.Layout.Fullscreen (fullscreenSupport, fullscreenManageHook, fullsc
 import XMonad.Util.EZConfig (additionalKeys)
 import qualified XMonad.StackSet as W -- for window management commands.
 import System.IO (hPutStrLn)
-import Graphics.X11.ExtraTypes.XF86
+import Graphics.X11.ExtraTypes.XF86 -- for the mOtherKeys KeySyms.
 -- import Data.Semigroup
 import Numeric.Natural (Natural)
 
@@ -40,11 +44,13 @@ import Numeric.Natural (Natural)
 (<>) :: Monoid m ⇒ m → m → m
 (<>) = mappend
 
+winKey :: KeyMask
 winKey = mod4Mask -- Win key
 
 myTerminal :: String
 myTerminal = "kitty" --was "cool-retro-term"
 
+myOtherKeys :: [((KeyMask, KeySym), X ())]
 myOtherKeys =
         ((0, xF86XK_AudioRaiseVolume), spawn "amixer set Master 2%+") :
         ((0, xF86XK_AudioLowerVolume), spawn "amixer set Master 2%-") :
@@ -58,12 +64,13 @@ myOtherKeys =
         []
 
 shorten :: Natural → String → String
-shorten _ [] = []
-shorten 1 cs = case cs of
-   c : [] → cs
-   c : _ → '…' : []
-shorten 0 _ = []
-shorten n (c : cs) = c : shorten (n - 1) cs
+shorten = shortenWith "…"
+
+shortenWith :: [a] → Natural → [a] → [a]
+shortenWith ellipsis maxLength xs
+   | length xs > fromIntegral maxLength = take (fromIntegral maxLength - length ellipsis) xs <> ellipsis
+   | otherwise = xs
+
 
 main = do
   xmobar ← spawnPipe "xmobar /Ix/k/Settings/xmonad/xmobarrc"
