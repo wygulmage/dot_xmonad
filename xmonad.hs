@@ -20,7 +20,8 @@ import XMonad.Actions.UpdatePointer (updatePointer)
 import XMonad.Hooks.DynamicLog
    ( ppLayout, ppCurrent, ppOutput, ppTitle
    , dynamicLogWithPP, xmobarPP
-   , shorten, wrap
+   -- , shorten
+   , wrap
    )
 import XMonad.Hooks.ManageDocks (manageDocks, avoidStruts, docksEventHook)
 import XMonad.Hooks.ManageHelpers (doFullFloat, isFullscreen)
@@ -32,6 +33,7 @@ import qualified XMonad.StackSet as W -- for window management commands.
 import System.IO (hPutStrLn)
 import Graphics.X11.ExtraTypes.XF86
 -- import Data.Semigroup
+import Numeric.Natural (Natural)
 
 
 -- No Semigroup instance for some XMonad monoids.
@@ -55,6 +57,13 @@ myOtherKeys =
         ((0, xF86XK_KbdBrightnessDown), spawn "/Ix/k/Settings/xmonad/kbd-backlight.sh down") :
         []
 
+shorten :: Natural → String → String
+shorten _ [] = []
+shorten 1 cs = case cs of
+   c : [] → cs
+   c : _ → '…' : []
+shorten 0 _ = []
+shorten n (c : cs) = c : shorten (n - 1) cs
 
 main = do
   xmobar ← spawnPipe "xmobar /Ix/k/Settings/xmonad/xmobarrc"
@@ -90,7 +99,7 @@ main = do
         ,
         ppOutput = hPutStrLn xmobar
         ,
-        ppTitle = shorten 50
+        ppTitle = shorten 60
         } *> updatePointer (0.5, 0.5) (0.96, 0.96)
     ,
     startupHook = spawn myTerminal <> startupHook def
