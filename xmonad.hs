@@ -22,10 +22,9 @@ import XMonad.Core (Query(..), WindowSet(..))
 import XMonad.Config (def)
 import XMonad.Actions.UpdatePointer (updatePointer)
 import XMonad.Hooks.DynamicLog
-   ( ppLayout, ppCurrent, ppOutput, ppTitle
-   , dynamicLogWithPP, xmobarPP
-   -- , shorten
-   , wrap
+   ( PP (ppLayout, ppCurrent, ppOutput, ppTitle)
+   , xmobarPP
+   , dynamicLogWithPP
    )
 import XMonad.Hooks.ManageDocks (manageDocks, avoidStruts, docksEventHook)
 import XMonad.Hooks.ManageHelpers (doFullFloat, isFullscreen)
@@ -47,8 +46,8 @@ import Numeric.Natural (Natural)
 winKey :: KeyMask
 winKey = mod4Mask -- Win key
 
-myTerminal :: String
-myTerminal = "kitty" --was "cool-retro-term"
+-- myTerminal :: String
+-- myTerminal = "kitty" --was "cool-retro-term"
 
 myOtherKeys :: [((KeyMask, KeySym), X ())]
 myOtherKeys =
@@ -63,13 +62,14 @@ myOtherKeys =
         ((0, xF86XK_KbdBrightnessDown), spawn "/Ix/k/Settings/xmonad/kbd-backlight.sh down") :
         []
 
-shorten :: Natural → String → String
-shorten = shortenWith "…"
 
 shortenWith :: [a] → Natural → [a] → [a]
 shortenWith ellipsis maxLength xs
-   | length xs > fromIntegral maxLength = take (fromIntegral maxLength - length ellipsis) xs <> ellipsis
+   | longer xs maxLength = take (fromIntegral maxLength - length ellipsis) xs <> ellipsis
    | otherwise = xs
+
+longer :: [a] → Natural → Bool
+longer xs n = not . null . drop (fromIntegral n) $ xs
 
 
 main = do
@@ -79,35 +79,35 @@ main = do
     ,
     modMask = winKey
     ,
-    terminal = myTerminal
+    terminal = "kitty"
     ,
     manageHook =
-      manageDocks
-      <>
-      (isFullscreen --> doFullFloat)
-      <>
-      fullscreenManageHook
-      <>
-      manageHook def
+       manageDocks
+       <>
+       (isFullscreen --> doFullFloat)
+       <>
+       fullscreenManageHook
+       <>
+       manageHook def
     ,
     layoutHook = (avoidStruts . smartBorders) (Tall 1 (3/100) (1/2) ||| Full)
     ,
     handleEventHook =
-      docksEventHook
-      <>
-      fullscreenEventHook
-      <>
-      handleEventHook def
+       docksEventHook
+       <>
+       fullscreenEventHook
+       <>
+       handleEventHook def
     ,
     logHook = dynamicLogWithPP xmobarPP {
-        ppLayout = const ""
-        ,
-        ppCurrent = wrap "[" "]"
-        ,
-        ppOutput = hPutStrLn xmobar
-        ,
-        ppTitle = shorten 60
-        } *> updatePointer (0.5, 0.5) (0.96, 0.96)
+       ppLayout = const ""
+       ,
+       ppCurrent = ("[" <>) . (<> "]")
+       ,
+       ppOutput = hPutStrLn xmobar
+       ,
+       ppTitle = shortenWith "…" 66
+       } *> updatePointer (0.5, 0.5) (0.96, 0.96)
     ,
     startupHook = spawn myTerminal <> startupHook def
     } `additionalKeys` myOtherKeys
