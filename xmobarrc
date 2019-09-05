@@ -2,8 +2,6 @@ Config
 { font = "xft:Source Code Pro:size=14"
 , additionalFonts = [ "xft:Symbola" ]
 , border = NoBorder
--- , borderColor = "black"
--- , borderWidth = 0
 , bgColor = "black"
 , fgColor = "#ff8100"
 , position = Top
@@ -29,6 +27,5 @@ Config
                     "-o", "<fn=1>☢</fn><left>"
                   ] 10
     , Run Wireless "wlp2s0" [ "-t", "<action=`(nm-connection-editor &)` button=1><fn=1>📡</fn><essid></action>"] 10
-    -- , Run Brightness [ "-t", "💡<percent>" ] 10 -- called '%bright%' in template
     ]
 }

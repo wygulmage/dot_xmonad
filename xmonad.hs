@@ -71,7 +71,8 @@ longer xs n = not . null . drop (fromIntegral n) $ xs
 
 
 main = do
-  xmobar ← spawnPipe "xmobar /Ix/k/Settings/xmonad/xmobarrc"
+  -- xmobar ← spawnPipe "xmobar /Ix/k/Settings/xmonad/xmobarrc"
+  xmobar ← spawnPipe "xmobar ~/.config/xmonad/xmobarrc"
   xmonad . ewmh . fullscreenSupport $ def {
     borderWidth = 1, normalBorderColor = "black", focusedBorderColor = "#ff8100"
     ,
