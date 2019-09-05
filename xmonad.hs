@@ -1,7 +1,6 @@
 {-# LANGUAGE
   UnicodeSyntax
   , FlexibleInstances
-  -- , NoImplicitPrelude
   #-}
 
 -- import Prelude hiding (take)
@@ -26,6 +25,7 @@ import XMonad.Hooks.DynamicLog
    , xmobarPP
    , dynamicLogWithPP
    )
+import XMonad.Hooks.EwmhDesktops (ewmh)
 import XMonad.Hooks.ManageDocks (manageDocks, avoidStruts, docksEventHook)
 import XMonad.Hooks.ManageHelpers (doFullFloat, isFullscreen)
 import XMonad.Util.Run (safeSpawn, unsafeSpawn, spawnPipe)
@@ -35,28 +35,26 @@ import XMonad.Util.EZConfig (additionalKeys)
 import qualified XMonad.StackSet as W -- for window management commands.
 import System.IO (hPutStrLn)
 import Graphics.X11.ExtraTypes.XF86 -- for the mOtherKeys KeySyms.
--- import Data.Semigroup
+-- import Data.Semigroup ((<>))
 import Numeric.Natural (Natural)
 
 
--- No Semigroup instance for some XMonad monoids.
+-- No Semigroup instance for some XMonad monoids ☹
 (<>) :: Monoid m ⇒ m → m → m
 (<>) = mappend
 
 winKey :: KeyMask
 winKey = mod4Mask -- Win key
 
--- myTerminal :: String
--- myTerminal = "kitty" --was "cool-retro-term"
+myTerminal :: String
+myTerminal = "kitty"
 
 myOtherKeys :: [((KeyMask, KeySym), X ())]
 myOtherKeys =
         ((0, xF86XK_AudioRaiseVolume), spawn "amixer set Master 2%+") :
         ((0, xF86XK_AudioLowerVolume), spawn "amixer set Master 2%-") :
         ((0, xF86XK_AudioMute), spawn "amixer -D pulse set Master toggle") :
-        -- ((0, xF86XK_MonBrightnessUp), spawn "xbacklight -inc 8") :
         ((0, xF86XK_MonBrightnessUp), spawn "xbacklight +10 -time 0 -steps 1") :
-        -- ((0, xF86XK_MonBrightnessDown), spawn "xbacklight -dec 8") :
         ((0, xF86XK_MonBrightnessDown), spawn "xbacklight -10 -time 0 -steps 1") :
         ((0, xF86XK_KbdBrightnessUp), spawn "/Ix/k/Settings/xmonad/kbd-backlight.sh up") :
         ((0, xF86XK_KbdBrightnessDown), spawn "/Ix/k/Settings/xmonad/kbd-backlight.sh down") :
@@ -74,12 +72,12 @@ longer xs n = not . null . drop (fromIntegral n) $ xs
 
 main = do
   xmobar ← spawnPipe "xmobar /Ix/k/Settings/xmonad/xmobarrc"
-  xmonad . fullscreenSupport $ def {
+  xmonad . ewmh . fullscreenSupport $ def {
     borderWidth = 1, normalBorderColor = "black", focusedBorderColor = "#ff8100"
     ,
     modMask = winKey
     ,
-    terminal = "kitty"
+    terminal = myTerminal
     ,
     manageHook =
        manageDocks

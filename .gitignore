@@ -1,5 +1,10 @@
+.stack-work/
+dot-xmonad.cabal
 xmonad.errors
-xmonad-x86_64-linux
 xmonad.hi
 xmonad.o
+xmonad-x86_64-linux
+xmonad.state
 log.txt
+*~
+stack.yaml.lock
