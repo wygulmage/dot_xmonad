@@ -28,7 +28,7 @@ import XMonad.Hooks.DynamicLog
    , dynamicLogWithPP
    )
 import XMonad.Hooks.EwmhDesktops (ewmh)
-import XMonad.Hooks.ManageDocks (manageDocks, avoidStruts, docksEventHook)
+import XMonad.Hooks.ManageDocks (avoidStruts, docks, docksEventHook, manageDocks)
 import XMonad.Hooks.ManageHelpers (doFullFloat, isFullscreen)
 import XMonad.Layout.Fullscreen (fullscreenSupport, fullscreenManageHook, fullscreenEventHook)
 import XMonad.Layout.NoBorders (smartBorders)
@@ -77,7 +77,7 @@ longer xs n = not . null . drop (fromIntegral n) $ xs
 main = do
   -- xmobar ← spawnPipe "xmobar /Ix/k/Settings/xmonad/xmobarrc"
   xmobar ← spawnPipe "xmobar ~/.config/xmonad/xmobarrc"
-  xmonad . ewmh . fullscreenSupport $ def {
+  xmonad . ewmh . docks . fullscreenSupport $ def {
     borderWidth = 1, normalBorderColor = "black", focusedBorderColor = "#ff8100"
     ,
     modMask = winKey
