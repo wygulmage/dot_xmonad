@@ -37,13 +37,13 @@ import XMonad.Util.Run (safeSpawn, unsafeSpawn, spawnPipe)
 
 import System.IO (hPutStrLn)
 import Graphics.X11.ExtraTypes.XF86 -- for the mOtherKeys KeySyms.
--- import Data.Semigroup ((<>))
+import Data.Semigroup ((<>))
 import Numeric.Natural (Natural)
 
 
 -- No Semigroup instance for some XMonad monoids ☹
-(<>) :: Monoid m ⇒ m → m → m
-(<>) = mappend
+-- (<>) :: Monoid m ⇒ m → m → m
+-- (<>) = mappend
 
 winKey :: KeyMask
 winKey = mod4Mask -- Win key
