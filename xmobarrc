@@ -7,7 +7,7 @@ Config
 , position = Top
 , sepChar = "%"
 , alignSep = "}{"
-, template = "%StdinReader% } %date% { %kbd% %alsa:default:Master% <action=`(nm-connection-editor &)` button=1><fn=1>📡</fn>%ssid%</action> %battery%"
+, template = "%StdinReader% } %date% { %kbd% %alsa:default:Master% %wi% %battery%"
 , commands =
     [ Run StdinReader
     , Run Date "%A %B %-d %_H:%M" "date" 600
@@ -26,6 +26,6 @@ Config
                     "-i", "<fn=1>🔌</fn>",
                     "-o", "<fn=1>☢</fn><left>"
                   ] 10
-    , Run Com "iwgetid" [ "-r" ] "ssid" 60
+    , Run Wireless "" [ "-t", "<action=`(nm-connection-editor &)` button=1><fn=1>📡</fn><ssid></action>" ] 60
     ]
 }
