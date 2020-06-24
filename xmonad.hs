@@ -36,6 +36,7 @@ import XMonad.Layout.NoBorders (smartBorders)
 import XMonad.Util.EZConfig (additionalKeys)
 import XMonad.Util.Run (safeSpawn, spawnPipe)
 
+import Control.Monad.IO.Class (MonadIO)
 import System.IO (hPutStrLn)
 import Graphics.X11.ExtraTypes.XF86 -- for the mOtherKeys KeySyms.
 import Data.Semigroup ((<>))
@@ -48,17 +49,20 @@ winKey = mod4Mask -- Win key
 myTerminal :: String
 myTerminal = "kitty"
 
+mySpawn :: MonadIO m => FilePath -> String -> m ()
+mySpawn prog = safeSpawn prog . words
+
 myOtherKeys :: [((KeyMask, KeySym), X ())]
 myOtherKeys =
-        ((0, xF86XK_AudioRaiseVolume), safeSpawn "amixer" (words "set Master 2%+")) :
-        ((0, xF86XK_AudioLowerVolume), safeSpawn "amixer" (words "set Master 2%-")) :
-        ((0, xF86XK_AudioMute), safeSpawn "amixer" (words "-D pulse set Master toggle")) :
-        ((0, xF86XK_MonBrightnessUp), safeSpawn "light" (words "-A 5")) :
-        ((0, xF86XK_MonBrightnessDown), safeSpawn "light" (words "-U 5")) :
+        ((0, xF86XK_AudioRaiseVolume), mySpawn "amixer" "set Master 2%+") :
+        ((0, xF86XK_AudioLowerVolume), mySpawn "amixer" "set Master 2%-") :
+        ((0, xF86XK_AudioMute), mySpawn "amixer" "-D pulse set Master toggle") :
+        ((0, xF86XK_MonBrightnessUp), mySpawn "light" "-A 5") :
+        ((0, xF86XK_MonBrightnessDown), mySpawn "light" "-U 5") :
         -- ((0, xF86XK_MonBrightnessUp), spawn "xbacklight +10 -time 0 -steps 1") :
         -- ((0, xF86XK_MonBrightnessDown), spawn "xbacklight -10 -time 0 -steps 1") :
-        ((0, xF86XK_KbdBrightnessUp), safeSpawn "/Ix/k/Settings/xmonad/kbd-backlight.sh" ["up"]) :
-        ((0, xF86XK_KbdBrightnessDown), safeSpawn "/Ix/k/Settings/xmonad/kbd-backlight.sh" ["down"]) :
+        ((0, xF86XK_KbdBrightnessUp), mySpawn "/Ix/k/Settings/xmonad/kbd-backlight.sh" "up") :
+        ((0, xF86XK_KbdBrightnessDown), mySpawn "/Ix/k/Settings/xmonad/kbd-backlight.sh" "down") :
         []
 
 
@@ -101,7 +105,7 @@ main = do
        }
        *> updatePointer (0.5, 0.5) (0.96, 0.96)
     ,
-    startupHook = ifWindow (className =? myTerminal) idHook (safeSpawn myTerminal []) <> startupHook def -- If there's no terminal open, open it.
+    startupHook = ifWindow (className =? myTerminal) idHook (mySpawn myTerminal "") <> startupHook def -- If there's no terminal open, open it.
     }
     `additionalKeys` myOtherKeys
 
