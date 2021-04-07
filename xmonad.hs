@@ -20,8 +20,8 @@ import XMonad
 -- import XMonad.Core (Query(..), WindowSet)
 import XMonad.Config (def)
 -- import qualified XMonad.StackSet as W -- for window management commands.
+import XMonad.ManageHook ((=?), className, idHook, doShift)
 
-import XMonad.Actions.SpawnOn (spawnOn)
 import XMonad.Actions.WindowGo (ifWindow)
 import XMonad.Actions.UpdatePointer (updatePointer)
 import XMonad.Hooks.DynamicLog
@@ -32,7 +32,6 @@ import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.EwmhDesktops (ewmh)
 import XMonad.Hooks.ManageDocks (avoidStruts, docks)
 import XMonad.Hooks.ManageHelpers (doFullFloat, isFullscreen)
-import XMonad.ManageHook ((=?), className, idHook)
 import XMonad.Layout.Fullscreen (fullscreenSupport)
 import XMonad.Layout.NoBorders (smartBorders)
 import XMonad.Util.Run (safeSpawn, spawnPipe)
@@ -119,7 +118,11 @@ main = do
     ,
     terminal = myTerminal
     ,
-    manageHook = (isFullscreen --> doFullFloat) <> manageHook def -- no border on fullscreen windows
+    manageHook =
+       (isFullscreen --> doFullFloat) <>
+       (className =? "Nautilus" --> doShift "2") <>
+       (className =? "Pale moon" --> doShift "3") <>
+       manageHook def -- no border on fullscreen windows
     ,
     layoutHook = (avoidStruts . smartBorders) (Tall 1 (3/100) (1/2) ||| Full)
     ,
@@ -136,9 +139,9 @@ main = do
        *> updatePointer (0.5, 0.5) (0.96, 0.96)
     ,
     startupHook =
-       ifWindow (className =? myTerminal) idHook (spawnOn "1" myTerminal) <> -- If there's no terminal open, open it.
-       ifWindow (className =? "nautilus") idHook (spawnOn "2" "nautilus") <>
-       ifWindow (className =? "Pale moon") idHook (spawnOn "3" "palemoon --private") <>
+       ifWindow (className =? myTerminal) idHook (mySpawn myTerminal "") <> -- If there's no terminal open, open it.
+       ifWindow (className =? "Nautilus") idHook (mySpawn "nautilus" "") <>
+       ifWindow (className =? "Pale moon") idHook (mySpawn "palemoon" "--private") <>
        startupHook def
     ,
     keys = Map.union myKeys . keys def -- keys is a function from an XConfig to a Map of keys so it can grab modMask from the XConfig.
