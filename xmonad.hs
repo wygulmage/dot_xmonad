@@ -7,12 +7,13 @@
 import XMonad
    ( X
    , Full (Full), Tall (Tall)
-   , KeyMask, KeySym
+   , ButtonMask, KeyMask, KeySym
    , (|||), (-->)
    , borderWidth
    , normalBorderColor, focusedBorderColor
    , modMask, mod4Mask
    , terminal
+   , keys
    , manageHook, layoutHook, logHook, startupHook
    , xmonad
    )
@@ -20,6 +21,7 @@ import XMonad
 import XMonad.Config (def)
 -- import qualified XMonad.StackSet as W -- for window management commands.
 
+import XMonad.Actions.SpawnOn (spawnOn)
 import XMonad.Actions.WindowGo (ifWindow)
 import XMonad.Actions.UpdatePointer (updatePointer)
 import XMonad.Hooks.DynamicLog
@@ -33,13 +35,13 @@ import XMonad.Hooks.ManageHelpers (doFullFloat, isFullscreen)
 import XMonad.ManageHook ((=?), className, idHook)
 import XMonad.Layout.Fullscreen (fullscreenSupport)
 import XMonad.Layout.NoBorders (smartBorders)
-import XMonad.Util.EZConfig (additionalKeys)
 import XMonad.Util.Run (safeSpawn, spawnPipe)
 
 import Control.Monad.IO.Class (MonadIO)
 import System.IO (hPutStrLn)
 import Graphics.X11.ExtraTypes.XF86 -- for the mOtherKeys KeySyms.
 import Data.Semigroup ((<>))
+import qualified Data.Map.Strict as Map
 import Numeric.Natural (Natural)
 
 
@@ -52,24 +54,24 @@ myTerminal = "kitty"
 mySpawn :: MonadIO m => FilePath -> String -> m ()
 mySpawn prog = safeSpawn prog . words
 
-myOtherKeys :: [((KeyMask, KeySym), X ())]
-myOtherKeys =
-        ((0, xF86XK_AudioRaiseVolume), mySpawn "amixer" "set Master 2%+") :
-        ((0, xF86XK_AudioLowerVolume), mySpawn "amixer" "set Master 2%-") :
-        ((0, xF86XK_AudioMute), mySpawn "amixer" "-D pulse set Master toggle") :
-        ((0, xF86XK_MonBrightnessUp), mySpawn "light" "-A 5") :
-        ((0, xF86XK_MonBrightnessDown), mySpawn "light" "-U 5") :
-        -- ((0, xF86XK_MonBrightnessUp), spawn "xbacklight +10 -time 0 -steps 1") :
-        -- ((0, xF86XK_MonBrightnessDown), spawn "xbacklight -10 -time 0 -steps 1") :
-        ((0, xF86XK_KbdBrightnessUp), mySpawn "/Ix/k/Settings/xmonad/kbd-backlight.sh" "up") :
-        ((0, xF86XK_KbdBrightnessDown), mySpawn "/Ix/k/Settings/xmonad/kbd-backlight.sh" "down") :
-        []
+myKeys :: Map.Map (ButtonMask, KeySym) (X ())
+myKeys =
+   Map.fromList (
+      ((0, xF86XK_AudioRaiseVolume), mySpawn "amixer" "set Master 2%+") :
+      ((0, xF86XK_AudioLowerVolume), mySpawn "amixer" "set Master 2%-") :
+      ((0, xF86XK_AudioMute), mySpawn "amixer" "-D pulse set Master toggle") :
+      ((0, xF86XK_MonBrightnessUp), mySpawn "light" "-A 5") :
+      ((0, xF86XK_MonBrightnessDown), mySpawn "light" "-U 5") :
+      ((0, xF86XK_KbdBrightnessUp), mySpawn "/Ix/k/Settings/xmonad/kbd-backlight.sh" "up") :
+      ((0, xF86XK_KbdBrightnessDown), mySpawn "/Ix/k/Settings/xmonad/kbd-backlight.sh" "down") :
+      [])
 
 
 shortenWith :: [a] → Natural → [a] → [a]
 -- Warning: If ellipsis is longer than maxLength, this will return lists that are longer than maxLength.
 shortenWith ellipsis maxLength xs
-   | longer xs maxLength = take (fromIntegral maxLength - length ellipsis) xs <> ellipsis
+   | longer xs maxLength =
+       take (fromIntegral maxLength - length ellipsis) xs <> ellipsis
    | otherwise = xs
 
 longer :: [a] → Natural → Bool
@@ -78,6 +80,33 @@ longer xs n = not . null . drop (fromIntegral n) $ xs
 myForegroundColor, myBackgroundColor :: String
 myForegroundColor = "#ff8100"
 myBackgroundColor = "black"
+
+myXmobarConfig = -- haven't gotten this working yet...
+   "-v " <>
+   " -f xft:Source Code Pro:size=14,Symbola:size=14" <>
+   " -B " <> myBackgroundColor <>
+   " -F " <> myForegroundColor <>
+   " --top " <>
+   " -t '%StdinReader% } %date% { %kbd% %alsa:default:Master% %wi% %battery%'" <>
+   " -c '[ Run StdinReader" <>
+    ", Run Date \"%A %B %-d %_H:%M\" \"date\" 600" <>
+    ", Run Kbd [ (\"us(dvorak)\", \"DV\"), (\"us\", \"US\") ]" <>
+    ", Run Alsa \"default\" \"Master\"" <>
+               "[ \"-t\", \"<action=`(amixer -D pulse set Master toggle &)`><status><volume></action>\"," <>
+                 "\"--\"," <>
+                 "\"-O\", \"<fn=1>📢</fn>\"," <>
+                 "\"-C\",\"" <> myForegroundColor <> "\"," <>
+                 "\"-o\", \"<fn=1>📢̸</fn>\"," <>
+                 "\"-c\", \"#909190\"" <>
+               "]" <>
+    ", Run Battery [ \"-t\", \"<acstatus>\"," <>
+                    "\"--\"," <>
+                    "\"-O\", \"<fn=1>🔌</fn><left>\"," <>
+                    "\"-i\", \"<fn=1>🔌</fn>\"," <>
+                    "\"-o\", \"<fn=1>☢</fn><left>\"" <>
+                  "] 10" <>
+    ", Run Wireless [] [ \"-t\", \"<action=`(nm-connection-editor &)` button=1><fn=1>📡</fn><ssid></action>\" ] 60" <>
+    "]'"
 
 main :: IO ()
 main = do
@@ -101,12 +130,18 @@ main = do
        ,
        ppOutput = hPutStrLn xmobar
        ,
-       ppTitle = shortenWith "…" 66
+       -- ppTitle = shortenWith "…" 66
+       ppTitle = id
        }
        *> updatePointer (0.5, 0.5) (0.96, 0.96)
     ,
-    startupHook = ifWindow (className =? myTerminal) idHook (mySpawn myTerminal "") <> startupHook def -- If there's no terminal open, open it.
+    startupHook =
+       ifWindow (className =? myTerminal) idHook (spawnOn "1" myTerminal) <> -- If there's no terminal open, open it.
+       ifWindow (className =? "nautilus") idHook (spawnOn "2" "nautilus") <>
+       ifWindow (className =? "Pale moon") idHook (spawnOn "3" "palemoon --private") <>
+       startupHook def
+    ,
+    keys = Map.union myKeys . keys def -- keys is a function from an XConfig to a Map of keys so it can grab modMask from the XConfig.
     }
-    `additionalKeys` myOtherKeys
 
 -- Restart xmonad with mod-q.
