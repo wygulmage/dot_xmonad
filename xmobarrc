@@ -5,8 +5,8 @@ Config
 , bgColor = "black"
 , fgColor = "#ff8100"
 , position = Top
-, sepChar = "%"
-, alignSep = "}{"
+-- , sepChar = "%"
+-- , alignSep = "}{"
 , template = "%StdinReader% } %date% { %kbd% %alsa:default:Master% %wi% %battery%"
 , commands =
     [ Run StdinReader
@@ -20,12 +20,25 @@ Config
                  "-o", "<fn=1>📢̸</fn>",
                  "-c", "#909190"
                ]
+    , Run Wireless "" [ "-t", "<action=`(nm-connection-editor &)` button=1><fn=1>📡</fn><ssid></action>" ] 60
     , Run Battery [ "-t", "<acstatus>",
                     "--",
                     "-O", "<fn=1>🔌</fn><left>",
                     "-i", "<fn=1>🔌</fn>",
                     "-o", "<fn=1>☢</fn><left>"
                   ] 10
-    , Run Wireless "" [ "-t", "<action=`(nm-connection-editor &)` button=1><fn=1>📡</fn><ssid></action>" ] 60
     ]
 }
+
+-- TODO:
+-- Make YAML parser for this:
+-- font: xft:Source Code Pro:size=14
+-- border: NoBorder
+-- bgColor: black
+-- fgColor: #ff8100
+-- position: Top
+-- template: "%StdinReader% } %date% { %kbd% %alsa:default:Master% %wi% %battery%"
+-- commands:
+-- - Run StdinReader
+-- - Run Date
+
