@@ -29,7 +29,7 @@ import XMonad.Hooks.DynamicLog
    , xmobarPP
    , dynamicLogWithPP
    )
-import XMonad.Hooks.EwmhDesktops (ewmh)
+import XMonad.Hooks.EwmhDesktops (ewmh, ewmhFullscreen)
 import XMonad.Hooks.ManageDocks (avoidStruts, docks)
 import XMonad.Hooks.ManageHelpers (doFullFloat, isFullscreen)
 import XMonad.Layout.Fullscreen (fullscreenSupport)
@@ -111,7 +111,7 @@ main :: IO ()
 main = do
   xmobar ← spawnPipe "xmobar ~/.config/xmonad/xmobarrc"
   -- Looks like we need to apply fullscreenSupport before docks to get borderless full screen.
-  xmonad . ewmh . docks . fullscreenSupport $ def{
+  xmonad . ewmhFullscreen . ewmh . docks . fullscreenSupport $ def{
     borderWidth = 1, normalBorderColor = myBackgroundColor, focusedBorderColor = myForegroundColor
     ,
     modMask = winKey
