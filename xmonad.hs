@@ -111,40 +111,31 @@ main :: IO ()
 main = do
   xmobar ← spawnPipe "xmobar ~/.config/xmonad/xmobarrc"
   -- Looks like we need to apply fullscreenSupport before docks to get borderless full screen.
-  xmonad . ewmhFullscreen . ewmh . docks . fullscreenSupport $ def{
-    borderWidth = 1, normalBorderColor = myBackgroundColor, focusedBorderColor = myForegroundColor
-    ,
-    modMask = winKey
-    ,
-    terminal = myTerminal
-    ,
-    manageHook =
-       (isFullscreen --> doFullFloat) <>
-       (className =? "Nautilus" --> doShift "2") <>
-       (className =? "Pale moon" --> doShift "3") <>
-       manageHook def -- no border on fullscreen windows
-    ,
-    layoutHook = (avoidStruts . smartBorders) (Tall 1 (3/100) (1/2) ||| Full)
-    ,
-    logHook = dynamicLogWithPP xmobarPP{
-       ppLayout = const ""
-       ,
-       ppCurrent = ("[" <>) . (<> "]")
-       ,
-       ppOutput = hPutStrLn xmobar
-       ,
-       -- ppTitle = shortenWith "…" 66
-       ppTitle = id
-       }
-       *> updatePointer (0.5, 0.5) (0.96, 0.96)
-    ,
-    startupHook =
-       ifWindow (className =? myTerminal) idHook (mySpawn myTerminal "") <> -- If there's no terminal open, open it.
-       ifWindow (className =? "Nautilus") idHook (mySpawn "nautilus" "") <>
-       ifWindow (className =? "Pale moon") idHook (mySpawn "palemoon" "--private") <>
-       startupHook def
-    ,
-    keys = Map.union myKeys . keys def -- keys is a function from an XConfig to a Map of keys so it can grab modMask from the XConfig.
-    }
+  xmonad . ewmhFullscreen . ewmh . docks . fullscreenSupport $ def
+     { borderWidth = 1
+     , normalBorderColor = myBackgroundColor
+     , focusedBorderColor = myForegroundColor
+     , modMask = winKey
+     , terminal = myTerminal
+     , manageHook =
+        (isFullscreen --> doFullFloat) <>
+        (className =? "Nautilus" --> doShift "2") <>
+        (className =? "Pale moon" --> doShift "3") <>
+        manageHook def -- no border on fullscreen windows
+     , layoutHook = (avoidStruts . smartBorders) (Tall 1 (3/100) (1/2) ||| Full)
+     , logHook = dynamicLogWithPP xmobarPP
+        { ppLayout = const ""
+        , ppCurrent = ("[" <>) . (<> "]")
+        , ppOutput = hPutStrLn xmobar
+        , ppTitle = id
+        }
+        *> updatePointer (0.5, 0.5) (0.96, 0.96)
+     , startupHook =
+        ifWindow (className =? myTerminal) idHook (mySpawn myTerminal "") <> -- If there's no terminal open, open it.
+        ifWindow (className =? "Nautilus") idHook (mySpawn "nautilus" "") <>
+        ifWindow (className =? "Pale moon") idHook (mySpawn "palemoon" "--private") <>
+        startupHook def
+     , keys = Map.union myKeys . keys def -- keys is a function from an XConfig to a Map of keys so it can grab modMask from the XConfig.
+     }
 
 -- Restart xmonad with mod-q.
