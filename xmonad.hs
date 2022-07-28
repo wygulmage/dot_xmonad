@@ -77,35 +77,36 @@ longer :: [a] → Natural → Bool
 longer xs n = not . null . drop (fromIntegral n) $ xs
 
 myForegroundColor, myBackgroundColor :: String
-myForegroundColor = "#ff8100"
-myBackgroundColor = "black"
+-- myForegroundColor = "#ff8100"
+myForegroundColor = "#337ad9"
+myBackgroundColor = "#000000"
 
-myXmobarConfig = -- haven't gotten this working yet...
-   "-v " <>
-   " -f xft:Source Code Pro:size=14,Symbola:size=14" <>
-   " -B " <> myBackgroundColor <>
-   " -F " <> myForegroundColor <>
-   " --top " <>
-   " -t '%StdinReader% } %date% { %kbd% %alsa:default:Master% %wi% %battery%'" <>
-   " -c '[ Run StdinReader" <>
-    ", Run Date \"%A %B %-d %_H:%M\" \"date\" 600" <>
-    ", Run Kbd [ (\"us(dvorak)\", \"DV\"), (\"us\", \"US\") ]" <>
-    ", Run Alsa \"default\" \"Master\"" <>
-               "[ \"-t\", \"<action=`(amixer -D pulse set Master toggle &)`><status><volume></action>\"," <>
-                 "\"--\"," <>
-                 "\"-O\", \"<fn=1>📢</fn>\"," <>
-                 "\"-C\",\"" <> myForegroundColor <> "\"," <>
-                 "\"-o\", \"<fn=1>📢̸</fn>\"," <>
-                 "\"-c\", \"#909190\"" <>
-               "]" <>
-    ", Run Battery [ \"-t\", \"<acstatus>\"," <>
-                    "\"--\"," <>
-                    "\"-O\", \"<fn=1>🔌</fn><left>\"," <>
-                    "\"-i\", \"<fn=1>🔌</fn>\"," <>
-                    "\"-o\", \"<fn=1>☢</fn><left>\"" <>
-                  "] 10" <>
-    ", Run Wireless [] [ \"-t\", \"<action=`(nm-connection-editor &)` button=1><fn=1>📡</fn><ssid></action>\" ] 60" <>
-    "]'"
+-- myXmobarConfig = -- haven't gotten this working yet...
+--    "-v " <>
+--    " -f xft:Source Code Pro:size=14,Symbola:size=14" <>
+--    " -B " <> myBackgroundColor <>
+--    " -F " <> myForegroundColor <>
+--    " --top " <>
+--    " -t '%StdinReader% } %date% { %kbd% %alsa:default:Master% %wi% %battery%'" <>
+--    " -c '[ Run StdinReader" <>
+--     ", Run Date \"%A %B %-d %_H:%M\" \"date\" 600" <>
+--     ", Run Kbd [ (\"us(dvorak)\", \"DV\"), (\"us\", \"US\") ]" <>
+--     ", Run Alsa \"default\" \"Master\"" <>
+--                "[ \"-t\", \"<action=`(amixer -D pulse set Master toggle &)`><status><volume></action>\"," <>
+--                  "\"--\"," <>
+--                  "\"-O\", \"<fn=1>📢</fn>\"," <>
+--                  "\"-C\",\"" <> myForegroundColor <> "\"," <>
+--                  "\"-o\", \"<fn=1>📢̸</fn>\"," <>
+--                  "\"-c\", \"#909190\"" <>
+--                "]" <>
+--     ", Run Battery [ \"-t\", \"<acstatus>\"," <>
+--                     "\"--\"," <>
+--                     "\"-O\", \"<fn=1>🔌</fn><left>\"," <>
+--                     "\"-i\", \"<fn=1>🔌</fn>\"," <>
+--                     "\"-o\", \"<fn=1>☢</fn><left>\"" <>
+--                   "] 10" <>
+--     ", Run Wireless [] [ \"-t\", \"<action=`(nm-connection-editor &)` button=1><fn=1>📡</fn><ssid></action>\" ] 60" <>
+--     "]'"
 
 main :: IO ()
 main = do
