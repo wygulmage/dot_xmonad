@@ -1,6 +1,3 @@
-{-# LANGUAGE UnicodeSyntax
-  #-}
-
 import XMonad
     ( X
     , Full (Full), Tall (Tall)
@@ -65,7 +62,7 @@ myKeys =
 
 main :: IO ()
 main = do
-    xmobar ← spawnPipe "xmobar ~/.config/xmonad/xmobarrc"
+    xmobar <- spawnPipe "xmobar ~/.config/xmonad/xmobarrc"
     -- Apply fullscreenSupport before docks to get borderless full screen.
     xmonad . ewmhFullscreen . ewmh . docks . fullscreenSupport $ def
         { modMask = winKey
